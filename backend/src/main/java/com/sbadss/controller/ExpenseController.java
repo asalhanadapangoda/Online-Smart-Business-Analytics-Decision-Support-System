@@ -4,6 +4,7 @@ import com.sbadss.common.ApiResponse;
 import com.sbadss.dto.ExpenseRequest;
 import com.sbadss.entity.Expense;
 import com.sbadss.service.ExpenseService;
+import com.sbadss.util.ApiEndpoints;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/expenses")
+@RequestMapping(ApiEndpoints.EXPENSE_BASE)
 @RequiredArgsConstructor
 public class ExpenseController {
 

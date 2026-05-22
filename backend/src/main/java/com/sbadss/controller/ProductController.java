@@ -4,6 +4,7 @@ import com.sbadss.common.ApiResponse;
 import com.sbadss.dto.ProductRequest;
 import com.sbadss.dto.ProductResponse;
 import com.sbadss.service.ProductService;
+import com.sbadss.util.ApiEndpoints;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping(ApiEndpoints.PRODUCT_BASE)
 @RequiredArgsConstructor
 public class ProductController {
 
@@ -37,7 +38,7 @@ public class ProductController {
         return ResponseEntity.ok(ApiResponse.success(productService.createProduct(dto), "Product created successfully"));
     }
 
-    @PatchMapping("/{id}/stock")
+    @PatchMapping(ApiEndpoints.PRODUCT_STOCK)
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<ApiResponse<Void>> updateStock(@PathVariable Long id, @RequestParam Integer quantity) {
         log.info("REST request to update stock for product: {} with quantity: {}", id, quantity);
@@ -45,7 +46,7 @@ public class ProductController {
         return ResponseEntity.ok(ApiResponse.success(null, "Stock updated successfully"));
     }
 
-    @PostMapping("/import")
+    @PostMapping(ApiEndpoints.PRODUCT_IMPORT)
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<ApiResponse<Void>> importProducts(
             @RequestParam("file") org.springframework.web.multipart.MultipartFile file,

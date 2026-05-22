@@ -3,6 +3,7 @@ package com.sbadss.controller;
 import com.sbadss.common.ApiResponse;
 import com.sbadss.entity.Category;
 import com.sbadss.service.CategoryService;
+import com.sbadss.util.ApiEndpoints;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping(ApiEndpoints.CATEGORY_BASE)
 @RequiredArgsConstructor
 public class CategoryController {
 

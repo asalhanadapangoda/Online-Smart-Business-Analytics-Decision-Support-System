@@ -4,6 +4,7 @@ import com.sbadss.common.ApiResponse;
 import com.sbadss.dto.SaleRequest;
 import com.sbadss.entity.Sale;
 import com.sbadss.service.SaleService;
+import com.sbadss.util.ApiEndpoints;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,14 +16,14 @@ import com.sbadss.dto.SaleResponse;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/sales")
+@RequestMapping(ApiEndpoints.SALE_BASE)
 @RequiredArgsConstructor
 public class SaleController {
 
 
     private final SaleService saleService;
     
-    @GetMapping("/ping")
+    @GetMapping(ApiEndpoints.SALE_PING)
     @PreAuthorize("permitAll()")
     public ResponseEntity<String> ping() {
         return ResponseEntity.ok("SaleController is reachable");
@@ -43,14 +44,14 @@ public class SaleController {
         return ResponseEntity.ok(ApiResponse.success(saleService.createSale(request), "Sale recorded successfully"));
     }
 
-    @PatchMapping("/{id}/complete")
+    @PatchMapping(ApiEndpoints.SALE_COMPLETE)
     @PreAuthorize("hasAnyRole('CASHIER', 'MANAGER', 'ADMIN')")
     public ResponseEntity<ApiResponse<SaleResponse>> completeSale(@PathVariable Long id) {
         log.info("REST request to complete sale: {}", id);
         return ResponseEntity.ok(ApiResponse.success(saleService.completeSale(id), "Bill completed successfully"));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(ApiEndpoints.SALE_ID)
     @PreAuthorize("hasAnyRole('CASHIER', 'MANAGER', 'ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteSale(@PathVariable Long id) {
         log.info("REST request to delete sale: {}", id);
@@ -58,7 +59,7 @@ public class SaleController {
         return ResponseEntity.ok(ApiResponse.success(null, "Sale deleted successfully"));
     }
 
-    @GetMapping("/{id}/invoice")
+    @GetMapping(ApiEndpoints.SALE_INVOICE)
     @PreAuthorize("hasAnyRole('CASHIER', 'MANAGER', 'ADMIN')")
     public ResponseEntity<org.springframework.core.io.InputStreamResource> getInvoice(@PathVariable Long id) {
         log.info("REST request to download invoice for sale: {}", id);

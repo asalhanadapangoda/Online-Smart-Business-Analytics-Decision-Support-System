@@ -3,6 +3,7 @@ package com.sbadss.controller;
 import com.sbadss.common.ApiResponse;
 import com.sbadss.dto.DashboardResponse;
 import com.sbadss.service.AnalyticsService;
+import com.sbadss.util.ApiEndpoints;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -14,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/analytics")
+@RequestMapping(ApiEndpoints.ANALYTICS_BASE)
 @RequiredArgsConstructor
 public class AnalyticsController {
 
     private final AnalyticsService analyticsService;
 
-    @GetMapping("/dashboard")
+    @GetMapping(ApiEndpoints.ANALYTICS_DASHBOARD)
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN', 'CASHIER')")
     public ResponseEntity<ApiResponse<DashboardResponse>> getDashboardData(
             @RequestParam(required = false) Long branchId) {
@@ -29,7 +30,7 @@ public class AnalyticsController {
         return ResponseEntity.ok(ApiResponse.success(data, "Dashboard data fetched successfully"));
     }
 
-    @GetMapping("/profit-loss")
+    @GetMapping(ApiEndpoints.ANALYTICS_PROFIT_LOSS)
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
     public ResponseEntity<ApiResponse<com.sbadss.dto.ProfitLossResponse>> getProfitLossData(
             @RequestParam(required = false) Long branchId) {

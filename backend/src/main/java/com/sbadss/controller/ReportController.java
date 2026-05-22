@@ -5,6 +5,7 @@ import com.sbadss.dto.ReportRequest;
 import com.sbadss.dto.ReportResponse;
 import com.sbadss.entity.User;
 import com.sbadss.service.ReportService;
+import com.sbadss.util.ApiEndpoints;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,14 +21,14 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/reports")
+@RequestMapping(ApiEndpoints.REPORT_BASE)
 @RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
 public class ReportController {
 
     private final ReportService reportService;
 
-    @PostMapping("/generate")
+    @PostMapping(ApiEndpoints.REPORT_GENERATE)
     public ResponseEntity<ApiResponse<ReportResponse>> generateReport(
             @Valid @RequestBody ReportRequest request,
             @AuthenticationPrincipal(expression = "user") User user) {
@@ -36,7 +37,7 @@ public class ReportController {
                 reportService.generateReport(request, user.getId()), "Report generation started"));
     }
 
-    @GetMapping("/{id}/download")
+    @GetMapping(ApiEndpoints.REPORT_DOWNLOAD)
     public ResponseEntity<Resource> downloadReport(@PathVariable Long id) {
         log.info("GET /api/v1/reports/{}/download", id);
         Resource resource = reportService.downloadReport(id);
@@ -49,7 +50,7 @@ public class ReportController {
                 .body(resource);
     }
 
-    @GetMapping("/history")
+    @GetMapping(ApiEndpoints.REPORT_HISTORY)
     public ResponseEntity<ApiResponse<List<ReportResponse>>> getReportHistory(
             @RequestParam(required = false) Long branchId) {
         log.info("GET /api/v1/reports/history - branch: {}", branchId);

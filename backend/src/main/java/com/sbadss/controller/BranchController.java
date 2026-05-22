@@ -4,6 +4,7 @@ import com.sbadss.common.ApiResponse;
 import com.sbadss.dto.BranchRequest;
 import com.sbadss.dto.BranchResponse;
 import com.sbadss.service.BranchService;
+import com.sbadss.util.ApiEndpoints;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/branches")
+@RequestMapping(ApiEndpoints.BRANCH_BASE)
 @RequiredArgsConstructor
 public class BranchController {
 
@@ -29,7 +30,7 @@ public class BranchController {
         return ResponseEntity.ok(ApiResponse.success(branchService.getAllBranches(), "Branches fetched successfully"));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(ApiEndpoints.BRANCH_ID)
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<ApiResponse<BranchResponse>> getBranchById(@PathVariable Long id) {
         log.info("GET /api/v1/branches/{}", id);
@@ -44,7 +45,7 @@ public class BranchController {
                 .body(ApiResponse.success(branchService.createBranch(request), "Branch created successfully"));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(ApiEndpoints.BRANCH_ID)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<BranchResponse>> updateBranch(
             @PathVariable Long id, @Valid @RequestBody BranchRequest request) {
@@ -52,7 +53,7 @@ public class BranchController {
         return ResponseEntity.ok(ApiResponse.success(branchService.updateBranch(id, request), "Branch updated successfully"));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(ApiEndpoints.BRANCH_ID)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deactivateBranch(@PathVariable Long id) {
         log.info("DELETE /api/v1/branches/{}", id);

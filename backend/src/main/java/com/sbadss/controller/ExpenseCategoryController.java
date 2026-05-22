@@ -3,6 +3,7 @@ package com.sbadss.controller;
 import com.sbadss.common.ApiResponse;
 import com.sbadss.entity.ExpenseCategory;
 import com.sbadss.repository.ExpenseCategoryRepository;
+import com.sbadss.util.ApiEndpoints;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/expense-categories")
+@RequestMapping(ApiEndpoints.EXPENSE_CATEGORY_BASE)
 @RequiredArgsConstructor
 public class ExpenseCategoryController {
 

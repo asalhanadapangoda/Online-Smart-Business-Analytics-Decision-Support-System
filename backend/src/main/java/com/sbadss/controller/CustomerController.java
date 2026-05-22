@@ -4,6 +4,7 @@ import com.sbadss.common.ApiResponse;
 import com.sbadss.dto.CustomerRequest;
 import com.sbadss.dto.CustomerResponse;
 import com.sbadss.service.CustomerService;
+import com.sbadss.util.ApiEndpoints;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/customers")
+@RequestMapping(ApiEndpoints.CUSTOMER_BASE)
 @RequiredArgsConstructor
 public class CustomerController {
 
@@ -34,7 +35,7 @@ public class CustomerController {
         return ResponseEntity.ok(ApiResponse.success(customerService.createCustomer(dto), "Customer created successfully"));
     }
 
-    @GetMapping("/search")
+    @GetMapping(ApiEndpoints.CUSTOMER_SEARCH)
     public ResponseEntity<ApiResponse<CustomerResponse>> searchByPhone(@RequestParam String phoneNumber) {
         log.info("REST request to search customer by phone: {}", phoneNumber);
         CustomerResponse customer = customerService.findByPhoneNumber(phoneNumber);

@@ -4,6 +4,7 @@ import com.sbadss.common.ApiResponse;
 import com.sbadss.dto.ForecastRequest;
 import com.sbadss.dto.ForecastResponse;
 import com.sbadss.service.ForecastService;
+import com.sbadss.util.ApiEndpoints;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,13 +14,13 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/forecasts")
+@RequestMapping(ApiEndpoints.FORECAST_BASE)
 @RequiredArgsConstructor
 public class ForecastController {
 
     private final ForecastService forecastService;
 
-    @PostMapping("/sales")
+    @PostMapping(ApiEndpoints.FORECAST_SALES)
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<ApiResponse<ForecastResponse>> getSalesForecast(
             @Valid @RequestBody ForecastRequest request) {

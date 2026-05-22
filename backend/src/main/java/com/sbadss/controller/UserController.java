@@ -3,6 +3,7 @@ package com.sbadss.controller;
 import com.sbadss.common.ApiResponse;
 import com.sbadss.dto.UserResponse;
 import com.sbadss.service.UserService;
+import com.sbadss.util.ApiEndpoints;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping(ApiEndpoints.USER_BASE)
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
 public class UserController {
@@ -26,39 +27,39 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(userService.getAllUsers(), "Users fetched successfully"));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(ApiEndpoints.USER_ID)
     public ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable Long id) {
         log.info("GET /api/v1/users/{}", id);
         return ResponseEntity.ok(ApiResponse.success(userService.getUserById(id), "User fetched successfully"));
     }
 
-    @GetMapping("/branch/{branchId}")
+    @GetMapping(ApiEndpoints.USER_BRANCH)
     public ResponseEntity<ApiResponse<List<UserResponse>>> getUsersByBranch(@PathVariable Long branchId) {
         log.info("GET /api/v1/users/branch/{}", branchId);
         return ResponseEntity.ok(ApiResponse.success(userService.getUsersByBranch(branchId), "Users fetched successfully"));
     }
 
-    @PatchMapping("/{id}/role")
+    @PatchMapping(ApiEndpoints.USER_ROLE)
     public ResponseEntity<ApiResponse<UserResponse>> updateUserRole(
             @PathVariable Long id, @RequestParam String roleName) {
         log.info("PATCH /api/v1/users/{}/role -> {}", id, roleName);
         return ResponseEntity.ok(ApiResponse.success(userService.updateUserRole(id, roleName), "User role updated successfully"));
     }
 
-    @PatchMapping("/{id}/toggle-status")
+    @PatchMapping(ApiEndpoints.USER_STATUS)
     public ResponseEntity<ApiResponse<UserResponse>> toggleUserStatus(@PathVariable Long id) {
         log.info("PATCH /api/v1/users/{}/toggle-status", id);
         return ResponseEntity.ok(ApiResponse.success(userService.toggleUserStatus(id), "User status updated successfully"));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(ApiEndpoints.USER_ID)
     public ResponseEntity<ApiResponse<UserResponse>> updateUser(
             @PathVariable Long id, @RequestBody com.sbadss.dto.RegisterRequest request) {
         log.info("PUT /api/v1/users/{}", id);
         return ResponseEntity.ok(ApiResponse.success(userService.updateUser(id, request), "User updated successfully"));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(ApiEndpoints.USER_ID)
     public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
         log.info("DELETE /api/v1/users/{}", id);
         userService.deleteUser(id);
