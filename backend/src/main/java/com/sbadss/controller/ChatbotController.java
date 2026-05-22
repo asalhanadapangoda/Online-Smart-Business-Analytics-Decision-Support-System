@@ -6,6 +6,7 @@ import com.sbadss.dto.ChatResponse;
 import com.sbadss.entity.User;
 import com.sbadss.service.ChatbotService;
 import com.sbadss.util.ApiEndpoints;
+import com.sbadss.util.CommonMessages;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,6 @@ public class ChatbotController {
             @AuthenticationPrincipal(expression = "user") User user) {
         log.info("POST /api/v1/chatbot/query - intent processing for user: {}", user.getUsername());
         ChatResponse response = chatbotService.processMessage(request, user.getId());
-        return ResponseEntity.ok(ApiResponse.success(response, "Query processed successfully"));
+        return ResponseEntity.ok(ApiResponse.success(response, CommonMessages.CHATBOT_QUERY_SUCCESS));
     }
 }

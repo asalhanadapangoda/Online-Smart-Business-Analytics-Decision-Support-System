@@ -3,6 +3,7 @@ package com.sbadss.controller;
 import com.sbadss.common.ApiResponse;
 import com.sbadss.service.RecommendationService;
 import com.sbadss.util.ApiEndpoints;
+import com.sbadss.util.CommonMessages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,12 +22,12 @@ public class RecommendationController {
     public ResponseEntity<ApiResponse<Map<String, Object>>> getChurnPrediction(
             @PathVariable Long customerId, @RequestParam Long branchId) {
         return ResponseEntity.ok(ApiResponse.success(
-                recommendationService.getChurnPrediction(customerId, branchId), "Churn prediction fetched"));
+                recommendationService.getChurnPrediction(customerId, branchId), CommonMessages.CHURN_PREDICTION_FETCH_SUCCESS));
     }
 
     @GetMapping(ApiEndpoints.RECOMMENDATION_BUSINESS)
     public ResponseEntity<ApiResponse<List<String>>> getBusinessRecommendations(@RequestParam Long branchId) {
         return ResponseEntity.ok(ApiResponse.success(
-                recommendationService.getBusinessRecommendations(branchId), "Recommendations fetched"));
+                recommendationService.getBusinessRecommendations(branchId), CommonMessages.RECOMMENDATIONS_FETCH_SUCCESS));
     }
 }

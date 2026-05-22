@@ -5,6 +5,7 @@ import com.sbadss.entity.Notification;
 import com.sbadss.entity.User;
 import com.sbadss.service.NotificationService;
 import com.sbadss.util.ApiEndpoints;
+import com.sbadss.util.CommonMessages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,24 +23,24 @@ public class NotificationController {
     @GetMapping
     public ResponseEntity<ApiResponse<List<Notification>>> getMyNotifications(@AuthenticationPrincipal(expression = "user") User user) {
         return ResponseEntity.ok(ApiResponse.success(
-                notificationService.getMyNotifications(user.getId()), "Notifications fetched"));
+                notificationService.getMyNotifications(user.getId()), CommonMessages.NOTIFICATIONS_FETCH_SUCCESS));
     }
 
     @GetMapping(ApiEndpoints.NOTIFICATION_UNREAD_COUNT)
     public ResponseEntity<ApiResponse<Long>> getUnreadCount(@AuthenticationPrincipal(expression = "user") User user) {
         return ResponseEntity.ok(ApiResponse.success(
-                notificationService.getUnreadCount(user.getId()), "Count fetched"));
+                notificationService.getUnreadCount(user.getId()), CommonMessages.NOTIFICATION_COUNT_FETCH_SUCCESS));
     }
 
     @PatchMapping(ApiEndpoints.NOTIFICATION_READ)
     public ResponseEntity<ApiResponse<Void>> markAsRead(@PathVariable Long id) {
         notificationService.markAsRead(id);
-        return ResponseEntity.ok(ApiResponse.success("Marked as read"));
+        return ResponseEntity.ok(ApiResponse.success(CommonMessages.NOTIFICATION_READ_SUCCESS));
     }
 
     @PatchMapping(ApiEndpoints.NOTIFICATION_READ_ALL)
     public ResponseEntity<ApiResponse<Void>> markAllAsRead(@AuthenticationPrincipal(expression = "user") User user) {
         notificationService.markAllAsRead(user.getId());
-        return ResponseEntity.ok(ApiResponse.success("All marked as read"));
+        return ResponseEntity.ok(ApiResponse.success(CommonMessages.NOTIFICATION_READ_ALL_SUCCESS));
     }
 }

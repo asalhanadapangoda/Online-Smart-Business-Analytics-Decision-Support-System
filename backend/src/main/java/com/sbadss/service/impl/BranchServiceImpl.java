@@ -8,6 +8,7 @@ import com.sbadss.exception.ResourceNotFoundException;
 import com.sbadss.mapper.BranchMapper;
 import com.sbadss.repository.BranchRepository;
 import com.sbadss.service.BranchService;
+import com.sbadss.util.CommonMessages;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class BranchServiceImpl implements BranchService {
         log.info("Fetching branch by id: {}", id);
         return branchMapper.toResponse(
                 branchRepository.findById(id)
-                        .orElseThrow(() -> new ResourceNotFoundException("Branch not found with id: " + id))
+                        .orElseThrow(() -> new ResourceNotFoundException(CommonMessages.BRANCH_NOT_FOUND_ID + id))
         );
     }
 
@@ -65,7 +66,7 @@ public class BranchServiceImpl implements BranchService {
     public BranchResponse updateBranch(Long id, BranchRequest request) {
         log.info("Updating branch id: {}", id);
         Branch branch = branchRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Branch not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(CommonMessages.BRANCH_NOT_FOUND_ID + id));
         branch.setName(request.getName());
         branch.setLocation(request.getLocation());
         branch.setContactNumber(request.getContactNumber());
@@ -80,7 +81,7 @@ public class BranchServiceImpl implements BranchService {
     public void deactivateBranch(Long id) {
         log.info("Deactivating branch id: {}", id);
         Branch branch = branchRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Branch not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(CommonMessages.BRANCH_NOT_FOUND_ID + id));
         branch.setActive(false);
         branchRepository.save(branch);
     }

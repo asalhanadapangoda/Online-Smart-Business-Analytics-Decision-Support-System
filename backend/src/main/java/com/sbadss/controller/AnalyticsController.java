@@ -4,6 +4,7 @@ import com.sbadss.common.ApiResponse;
 import com.sbadss.dto.DashboardResponse;
 import com.sbadss.service.AnalyticsService;
 import com.sbadss.util.ApiEndpoints;
+import com.sbadss.util.CommonMessages;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class AnalyticsController {
             @RequestParam(required = false) Long branchId) {
         log.info("REST request to fetch dashboard data for branch: {}", branchId);
         DashboardResponse data = analyticsService.getDashboardData(branchId);
-        return ResponseEntity.ok(ApiResponse.success(data, "Dashboard data fetched successfully"));
+        return ResponseEntity.ok(ApiResponse.success(data, CommonMessages.DASHBOARD_FETCH_SUCCESS));
     }
 
     @GetMapping(ApiEndpoints.ANALYTICS_PROFIT_LOSS)
@@ -36,6 +37,6 @@ public class AnalyticsController {
             @RequestParam(required = false) Long branchId) {
         log.info("REST request to fetch P&L data for branch: {}", branchId);
         com.sbadss.dto.ProfitLossResponse data = analyticsService.getProfitLossData(branchId);
-        return ResponseEntity.ok(ApiResponse.success(data, "P&L data fetched successfully"));
+        return ResponseEntity.ok(ApiResponse.success(data, CommonMessages.PL_FETCH_SUCCESS));
     }
 }

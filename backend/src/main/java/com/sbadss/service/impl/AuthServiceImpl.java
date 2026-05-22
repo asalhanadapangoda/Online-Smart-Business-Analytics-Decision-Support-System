@@ -12,6 +12,8 @@ import com.sbadss.repository.UserRepository;
 import com.sbadss.security.CustomUserDetails;
 import com.sbadss.security.JwtService;
 import com.sbadss.service.AuthService;
+import com.sbadss.exception.ResourceNotFoundException;
+import com.sbadss.util.CommonMessages;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -38,12 +40,12 @@ public class AuthServiceImpl implements AuthService {
         log.info("Registering user: {}", request.getUsername());
         
         Role role = roleRepository.findByName(request.getRoleName())
-                .orElseThrow(() -> new com.sbadss.exception.ResourceNotFoundException("Role not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(CommonMessages.ROLE_NOT_FOUND));
 
         Branch branch = null;
         if (request.getBranchId() != null) {
             branch = branchRepository.findById(request.getBranchId())
-                    .orElseThrow(() -> new com.sbadss.exception.ResourceNotFoundException("Branch not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException(CommonMessages.BRANCH_NOT_FOUND));
         }
 
         var user = new User();

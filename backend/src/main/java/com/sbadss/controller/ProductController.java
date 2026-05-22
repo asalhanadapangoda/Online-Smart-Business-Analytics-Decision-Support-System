@@ -5,6 +5,7 @@ import com.sbadss.dto.ProductRequest;
 import com.sbadss.dto.ProductResponse;
 import com.sbadss.service.ProductService;
 import com.sbadss.util.ApiEndpoints;
+import com.sbadss.util.CommonMessages;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,14 +29,14 @@ public class ProductController {
             @RequestParam(required = false) Long categoryId
     ) {
         log.info("REST request to get all products for branch: {} and category: {}", branchId, categoryId);
-        return ResponseEntity.ok(ApiResponse.success(productService.getAllProducts(branchId, categoryId), "Products fetched successfully"));
+        return ResponseEntity.ok(ApiResponse.success(productService.getAllProducts(branchId, categoryId), CommonMessages.PRODUCTS_FETCH_SUCCESS));
     }
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<ApiResponse<ProductResponse>> createProduct(@Valid @RequestBody ProductRequest dto) {
         log.info("REST request to create product: {}", dto.getName());
-        return ResponseEntity.ok(ApiResponse.success(productService.createProduct(dto), "Product created successfully"));
+        return ResponseEntity.ok(ApiResponse.success(productService.createProduct(dto), CommonMessages.PRODUCT_CREATE_SUCCESS));
     }
 
     @PatchMapping(ApiEndpoints.PRODUCT_STOCK)
@@ -43,7 +44,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse<Void>> updateStock(@PathVariable Long id, @RequestParam Integer quantity) {
         log.info("REST request to update stock for product: {} with quantity: {}", id, quantity);
         productService.updateStock(id, quantity);
-        return ResponseEntity.ok(ApiResponse.success(null, "Stock updated successfully"));
+        return ResponseEntity.ok(ApiResponse.success(null, CommonMessages.STOCK_UPDATE_SUCCESS));
     }
 
     @PostMapping(ApiEndpoints.PRODUCT_IMPORT)
@@ -53,6 +54,6 @@ public class ProductController {
             @RequestParam("branchId") Long branchId) {
         log.info("REST request to import products for branch: {}", branchId);
         productService.importProducts(file, branchId);
-        return ResponseEntity.ok(ApiResponse.success(null, "Products imported successfully"));
+        return ResponseEntity.ok(ApiResponse.success(null, CommonMessages.PRODUCTS_IMPORT_SUCCESS));
     }
 }

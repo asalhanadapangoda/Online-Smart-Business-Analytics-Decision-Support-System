@@ -8,6 +8,7 @@ import com.sbadss.mapper.UserMapper;
 import com.sbadss.repository.RoleRepository;
 import com.sbadss.repository.UserRepository;
 import com.sbadss.service.UserService;
+import com.sbadss.util.CommonMessages;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class UserServiceImpl implements UserService {
         log.info("Fetching user by id: {}", id);
         return userMapper.toResponse(
                 userRepository.findById(id)
-                        .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id))
+                        .orElseThrow(() -> new ResourceNotFoundException(CommonMessages.USER_NOT_FOUND_ID + id))
         );
     }
 
@@ -47,9 +48,9 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateUserRole(Long id, String roleName) {
         log.info("Updating role for user id: {} to {}", id, roleName);
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(CommonMessages.USER_NOT_FOUND_ID + id));
         Role role = roleRepository.findByName(roleName)
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + roleName));
+                .orElseThrow(() -> new ResourceNotFoundException(CommonMessages.ROLE_NOT_FOUND_NAME + roleName));
         user.setRole(role);
         return userMapper.toResponse(userRepository.save(user));
     }
@@ -59,7 +60,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse toggleUserStatus(Long id) {
         log.info("Toggling status for user id: {}", id);
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(CommonMessages.USER_NOT_FOUND_ID + id));
         user.setActive(!user.isActive());
         log.info("User {} {} successfully", user.getUsername(), user.isActive() ? "activated" : "deactivated");
         return userMapper.toResponse(userRepository.save(user));
@@ -70,7 +71,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateUser(Long id, com.sbadss.dto.RegisterRequest request) {
         log.info("Updating user id: {}", id);
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(CommonMessages.USER_NOT_FOUND_ID + id));
         
         user.setEmail(request.getEmail());
         user.setFullName(request.getFullName());
@@ -84,7 +85,7 @@ public class UserServiceImpl implements UserService {
         }
 
         Role role = roleRepository.findByName(request.getRoleName())
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + request.getRoleName()));
+                .orElseThrow(() -> new ResourceNotFoundException(CommonMessages.ROLE_NOT_FOUND_NAME + request.getRoleName()));
         user.setRole(role);
 
         return userMapper.toResponse(userRepository.save(user));
@@ -95,7 +96,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long id) {
         log.info("Deleting user id: {}", id);
         if (!userRepository.existsById(id)) {
-            throw new ResourceNotFoundException("User not found with id: " + id);
+            throw new ResourceNotFoundException(CommonMessages.USER_NOT_FOUND_ID + id);
         }
         userRepository.deleteById(id);
     }

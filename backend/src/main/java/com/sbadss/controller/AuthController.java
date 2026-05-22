@@ -6,6 +6,7 @@ import com.sbadss.dto.LoginRequest;
 import com.sbadss.dto.RegisterRequest;
 import com.sbadss.service.AuthService;
 import com.sbadss.util.ApiEndpoints;
+import com.sbadss.util.CommonMessages;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,12 +27,12 @@ public class AuthController {
     @PostMapping(ApiEndpoints.AUTH_REGISTER)
     public ResponseEntity<ApiResponse<AuthResponse>> register(@Valid @RequestBody RegisterRequest request) {
         log.info("REST request to register user: {}", request.getUsername());
-        return ResponseEntity.ok(ApiResponse.success(authService.register(request), "User registered successfully"));
+        return ResponseEntity.ok(ApiResponse.success(authService.register(request), CommonMessages.REGISTRATION_SUCCESS));
     }
 
     @PostMapping(ApiEndpoints.AUTH_LOGIN)
     public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest request) {
         log.info("REST request to login user: {}", request.getUsername());
-        return ResponseEntity.ok(ApiResponse.success(authService.login(request), "Login successful"));
+        return ResponseEntity.ok(ApiResponse.success(authService.login(request), CommonMessages.LOGIN_SUCCESS));
     }
 }

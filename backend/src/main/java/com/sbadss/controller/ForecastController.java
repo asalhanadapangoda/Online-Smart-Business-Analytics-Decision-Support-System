@@ -5,6 +5,7 @@ import com.sbadss.dto.ForecastRequest;
 import com.sbadss.dto.ForecastResponse;
 import com.sbadss.service.ForecastService;
 import com.sbadss.util.ApiEndpoints;
+import com.sbadss.util.CommonMessages;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,6 @@ public class ForecastController {
         log.info("POST /api/v1/ai/forecast/sales - branch: {}, horizon: {} days",
                 request.getBranchId(), request.getHorizonDays());
         ForecastResponse response = forecastService.getSalesForecast(request);
-        return ResponseEntity.ok(ApiResponse.success(response, "Forecast generated successfully"));
+        return ResponseEntity.ok(ApiResponse.success(response, CommonMessages.FORECAST_GENERATE_SUCCESS));
     }
 }
