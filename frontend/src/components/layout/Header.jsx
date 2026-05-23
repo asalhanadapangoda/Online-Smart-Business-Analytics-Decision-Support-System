@@ -54,10 +54,12 @@ export const Header = ({ onMenuClick }) => {
         >
           <Menu size={24} />
         </button>
-        <div style={{ position: 'relative', maxWidth: '400px', width: '100%' }} className="desktop-only">
-          <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} />
-          <input className="input" placeholder="Search analytics..." style={{ paddingLeft: '40px' }} />
-        </div>
+        {user?.role !== 'CASHIER' && (
+          <div style={{ position: 'relative', maxWidth: '400px', width: '100%' }} className="desktop-only">
+            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} />
+            <input className="input" placeholder="Search analytics..." style={{ paddingLeft: '40px' }} />
+          </div>
+        )}
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>

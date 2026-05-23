@@ -7,9 +7,10 @@ import { useAuthStore } from '@/store/authStore';
 
 export default function Customers() {
   const { user } = useAuthStore();
+  const isCashier = user?.role === 'CASHIER';
   const qc = useQueryClient();
   const [form, setForm] = useState({ name: '', email: '', phoneNumber: '', address: '' });
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(isCashier);
 
   // AI Churn Prediction State
   const [activeChurnCustomerId, setActiveChurnCustomerId] = useState(null);
@@ -18,7 +19,8 @@ export default function Customers() {
 
   const { data, isLoading } = useQuery({ 
     queryKey: ['customers'], 
-    queryFn: () => customersApi.getAll().then(r => r.data.data) 
+    queryFn: () => customersApi.getAll().then(r => r.data.data),
+    enabled: !isCashier
   });
 
   const createMutation = useMutation({
@@ -26,7 +28,7 @@ export default function Customers() {
     onSuccess: () => { 
       toast.success('Customer added'); 
       qc.invalidateQueries(['customers']); 
-      setShowForm(false); 
+      setShowForm(isCashier); 
       setForm({ name: '', email: '', phoneNumber: '', address: '' });
     },
     onError: (err) => {
@@ -67,11 +69,13 @@ export default function Customers() {
       <div className="page-header">
         <div>
           <h1 className="page-title">Customers</h1>
-          <p className="page-subtitle">{customers.length} registered customers</p>
+          <p className="page-subtitle">{isCashier ? 'Register a new customer' : `${customers.length} registered customers`}</p>
         </div>
-        <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
-          <Plus size={16} /> Add Customer
-        </button>
+        {!isCashier && (
+          <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
+            <Plus size={16} /> Add Customer
+          </button>
+        )}
       </div>
 
       {showForm && (
@@ -89,54 +93,56 @@ export default function Customers() {
         </div>
       )}
 
-      <div className="card" style={{ padding: 0 }}>
-        <div className="table-wrapper">
-          {isLoading ? (
-            <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-text-muted)' }}>Loading...</div>
-          ) : customers.length === 0 ? (
-            <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--color-text-muted)' }}>
-              <Users size={48} style={{ margin: '0 auto 1rem', opacity: 0.3 }} />
-              <p>No customers yet.</p>
-            </div>
-          ) : (
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Points</th>
-                  <th>Address</th>
-                  <th style={{ textAlign: 'right' }}>AI Insights</th>
-                </tr>
-              </thead>
-              <tbody>
-                {customers.map(c => (
-                  <tr key={c.id}>
-                    <td style={{ fontWeight: 600 }}>{c.name}</td>
-                    <td style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>{c.email || '—'}</td>
-                    <td>{c.phoneNumber}</td>
-                    <td>
-                      <span className="badge badge-success">{c.loyaltyPoints || 0}</span>
-                    </td>
-                    <td style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>{c.address || '—'}</td>
-                    <td style={{ textAlign: 'right' }}>
-                      <button 
-                        className="btn btn-secondary" 
-                        style={{ padding: '0.4rem 0.6rem', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }} 
-                        onClick={() => fetchChurnPrediction(c.id)}
-                      >
-                        <Brain size={14} color="var(--color-primary)" />
-                        Predict Churn
-                      </button>
-                    </td>
+      {!isCashier && (
+        <div className="card" style={{ padding: 0 }}>
+          <div className="table-wrapper">
+            {isLoading ? (
+              <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-text-muted)' }}>Loading...</div>
+            ) : customers.length === 0 ? (
+              <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--color-text-muted)' }}>
+                <Users size={48} style={{ margin: '0 auto 1rem', opacity: 0.3 }} />
+                <p>No customers yet.</p>
+              </div>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Points</th>
+                    <th>Address</th>
+                    <th style={{ textAlign: 'right' }}>AI Insights</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+                </thead>
+                <tbody>
+                  {customers.map(c => (
+                    <tr key={c.id}>
+                      <td style={{ fontWeight: 600 }}>{c.name}</td>
+                      <td style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>{c.email || '—'}</td>
+                      <td>{c.phoneNumber}</td>
+                      <td>
+                        <span className="badge badge-success">{c.loyaltyPoints || 0}</span>
+                      </td>
+                      <td style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>{c.address || '—'}</td>
+                      <td style={{ textAlign: 'right' }}>
+                        <button 
+                          className="btn btn-secondary" 
+                          style={{ padding: '0.4rem 0.6rem', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }} 
+                          onClick={() => fetchChurnPrediction(c.id)}
+                        >
+                          <Brain size={14} color="var(--color-primary)" />
+                          Predict Churn
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* AI Churn Prediction Modal */}
       {activeChurnCustomerId && (

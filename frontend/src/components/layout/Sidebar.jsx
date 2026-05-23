@@ -4,15 +4,17 @@ import { useAuthStore } from '@/store/authStore';
 import {
   LayoutDashboard, ShoppingCart, DollarSign, Package,
   Users, FileText, Settings, LogOut, ChevronLeft,
-  ChevronRight, Bot, TrendingUp, Building2, UserCog, X
+  ChevronRight, Bot, TrendingUp, Building2, UserCog, X, Plus
 } from 'lucide-react';
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['ADMIN', 'MANAGER'] },
-  { to: '/sales',     icon: ShoppingCart,    label: 'Sales',      roles: ['ADMIN', 'MANAGER', 'CASHIER'] },
+  { to: '/sales/new', icon: Plus,            label: 'New Sale',   roles: ['CASHIER'] },
+  { to: '/sales',     icon: ShoppingCart,    label: 'Sales Log',  roles: ['ADMIN', 'MANAGER', 'CASHIER'] },
   { to: '/expenses',  icon: DollarSign,      label: 'Expenses',   roles: ['ADMIN', 'MANAGER'] },
   { to: '/products',  icon: Package,         label: 'Products',   roles: ['ADMIN', 'MANAGER'] },
-  { to: '/customers', icon: Users,           label: 'Customers',  roles: ['ADMIN', 'MANAGER', 'CASHIER'] },
+  { to: '/customers', icon: Users,           label: 'Customers',  roles: ['ADMIN', 'MANAGER'] },
+  { to: '/customers', icon: Plus,            label: 'Add Customer', roles: ['CASHIER'] },
   { to: '/profit-loss', icon: TrendingUp,     label: 'Profit & Loss', roles: ['ADMIN', 'MANAGER'] },
   { to: '/reports',   icon: FileText,        label: 'Reports',    roles: ['ADMIN', 'MANAGER'] },
   { to: '/forecast',  icon: TrendingUp,      label: 'AI Forecast', roles: ['ADMIN', 'MANAGER'] },
@@ -35,7 +37,9 @@ export const Sidebar = ({ isOpen, onClose }) => {
   return (
     <aside className={`sidebar ${isOpen ? 'open' : ''}`} style={{
       width: collapsed ? '64px' : '240px',
-      minHeight: '100vh',
+      height: '100vh',
+      position: 'sticky',
+      top: 0,
       background: 'var(--color-surface)',
       borderRight: '1px solid var(--color-border)',
       display: 'flex',
@@ -55,9 +59,9 @@ export const Sidebar = ({ isOpen, onClose }) => {
       </div>
 
       {/* Nav */}
-      <nav style={{ flex: 1, padding: '0.75rem 0.5rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+      <nav style={{ flex: 1, padding: '0.75rem 0.5rem', display: 'flex', flexDirection: 'column', gap: '0.25rem', overflowY: 'auto' }}>
         {visibleItems.map(({ to, icon: Icon, label }) => (
-          <NavLink key={to} to={to} style={({ isActive }) => ({
+          <NavLink key={to} to={to} end style={({ isActive }) => ({
             display: 'flex',
             alignItems: 'center',
             gap: '0.75rem',
