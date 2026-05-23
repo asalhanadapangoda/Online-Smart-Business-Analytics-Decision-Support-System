@@ -53,7 +53,7 @@ export default function ChatbotWidget() {
           {/* Header */}
           <div style={{ padding:'1rem',background:'linear-gradient(135deg,#6366f1,#4f46e5)',display:'flex',alignItems:'center',gap:'0.75rem' }}>
             <div style={{ width:36,height:36,borderRadius:'50%',background:'rgba(255,255,255,0.2)',display:'flex',alignItems:'center',justifyContent:'center' }}><Bot size={20} color="white"/></div>
-            <div><p style={{ fontWeight:700,color:'white',fontSize:'0.9rem' }}>AI Business Advisor</p><p style={{ fontSize:'0.7rem',color:'rgba(255,255,255,0.7)' }}>Powered by SBADSS Intelligence</p></div>
+            <div><p style={{ fontWeight:700,color:'white',fontSize:'0.9rem' }}>AI Business Advisor</p><p style={{ fontSize:'0.7rem',color:'rgba(255,255,255,0.7)' }}>Powered by Lumina AI</p></div>
             <Sparkles size={16} color="rgba(255,255,255,0.7)" style={{ marginLeft:'auto' }}/>
           </div>
 

@@ -33,6 +33,10 @@ const PageLoader = () => (
     <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
   </div>
 );
+const RoleBasedRedirect = () => {
+  const { user } = useAuthStore();
+  return user?.role === 'CASHIER' ? <Navigate to="/sales" replace /> : <Navigate to="/dashboard" replace />;
+};
 
 export default function App() {
   const { isAuthenticated } = useAuthStore();
@@ -41,10 +45,10 @@ export default function App() {
     <QueryClientProvider client={qc}>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} />
+          <Route path="/login" element={isAuthenticated ? <RoleBasedRedirect /> : <Login />} />
           <Route path="/" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
-            <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
+            <Route index element={<RoleBasedRedirect />} />
+            <Route path="dashboard" element={<ProtectedRoute allowedRoles={['ADMIN','MANAGER']}><Dashboard /></ProtectedRoute>} />
             <Route path="sales" element={<SalesList />} />
             <Route path="sales/new" element={<NewSale />} />
             <Route path="expenses" element={<Suspense fallback={<PageLoader />}><ProtectedRoute allowedRoles={['ADMIN','MANAGER']}><Expenses /></ProtectedRoute></Suspense>} />

@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 
 const navItems = [
-  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['ADMIN', 'MANAGER', 'CASHIER'] },
+  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['ADMIN', 'MANAGER'] },
   { to: '/sales',     icon: ShoppingCart,    label: 'Sales',      roles: ['ADMIN', 'MANAGER', 'CASHIER'] },
   { to: '/expenses',  icon: DollarSign,      label: 'Expenses',   roles: ['ADMIN', 'MANAGER'] },
   { to: '/products',  icon: Package,         label: 'Products',   roles: ['ADMIN', 'MANAGER'] },
@@ -46,8 +46,8 @@ export const Sidebar = ({ isOpen, onClose }) => {
       {/* Logo */}
       <div style={{ padding: '1.25rem', borderBottom: '1px solid var(--color-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{ width: 36, height: 36, borderRadius: '0.5rem', background: 'linear-gradient(135deg, #6366f1, #22d3ee)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontWeight: 800, fontSize: '1rem', color: 'white' }}>S</div>
-          {!collapsed && <span style={{ fontWeight: 700, fontSize: '0.9rem', whiteSpace: 'nowrap' }}>SBADSS</span>}
+          <div style={{ width: 36, height: 36, borderRadius: '0.5rem', background: 'linear-gradient(135deg, #6366f1, #22d3ee)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontWeight: 800, fontSize: '1rem', color: 'white' }}>L</div>
+          {!collapsed && <span style={{ fontWeight: 700, fontSize: '0.9rem', whiteSpace: 'nowrap' }}>Lumina</span>}
         </div>
         <button className="mobile-toggle" onClick={onClose} style={{ background: 'transparent', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer' }}>
           <X size={20} />
@@ -86,7 +86,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
             <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>{user?.role}</p>
           </div>
         )}
-        <button onClick={handleLogout} className="btn btn-secondary" style={{ width: '100%', justifyContent: collapsed ? 'center' : 'flex-start' }}>
+        <button onClick={handleLogout} className="btn btn-danger" style={{ width: '100%', justifyContent: collapsed ? 'center' : 'flex-start' }}>
           <LogOut size={16} />
           {!collapsed && 'Logout'}
         </button>

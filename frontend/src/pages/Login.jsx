@@ -36,7 +36,11 @@ export default function Login() {
       const { token, role, username, fullName, id } = res.data.data;
       login({ username, fullName, role, id }, token);
       toast.success(`Welcome back, ${fullName || username}!`);
-      navigate('/dashboard');
+      if (role === 'CASHIER') {
+        navigate('/sales');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err) {
       const backendMessage = err.response?.data?.message;
       const fallbackMessage = err.response?.status === 401
@@ -53,9 +57,9 @@ export default function Login() {
       <div style={{ width: '100%', maxWidth: '420px' }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{ width: 64, height: 64, borderRadius: '1rem', background: 'linear-gradient(135deg, #6366f1, #22d3ee)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', fontSize: '1.75rem', fontWeight: 800, color: 'white' }}>S</div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '0.25rem' }}>SBADSS</h1>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>Smart Business Analytics & Decision Support System</p>
+          <div style={{ width: 64, height: 64, borderRadius: '1rem', background: 'linear-gradient(135deg, #6366f1, #22d3ee)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', fontSize: '1.75rem', fontWeight: 800, color: 'white' }}>L</div>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '0.25rem' }}>Lumina</h1>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>Intelligent Business Analytics & Decision Support</p>
         </div>
 
         <div className="card">
@@ -91,10 +95,6 @@ export default function Login() {
             </button>
           </form>
 
-          <div style={{ marginTop: '1.5rem', padding: '0.75rem', background: 'var(--color-surface-2)', borderRadius: '0.5rem', fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-            <strong>Demo Credentials:</strong><br />
-            Admin: admin / admin123 &nbsp;|&nbsp; Manager: manager / manager123
-          </div>
         </div>
       </div>
     </div>
