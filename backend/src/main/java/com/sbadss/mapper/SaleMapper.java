@@ -16,7 +16,8 @@ public class SaleMapper {
         if (rawData == null) return points;
         
         for (Object[] row : rawData) {
-            points.add(new DataPointResponse(row[0].toString(), (BigDecimal) row[1]));
+            BigDecimal value = new BigDecimal(row[1].toString());
+            points.add(new DataPointResponse(row[0].toString(), value));
         }
         return points;
     }

@@ -47,7 +47,9 @@ public class ReportServiceImpl implements ReportService {
     private final ExpenseRepository expenseRepository;
     private final BranchRepository branchRepository;
     private final UserRepository userRepository;
-    private final JavaMailSender mailSender;
+    
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private JavaMailSender mailSender;
 
     @Value("${sbadss.report.output.dir:./reports}")
     private String reportOutputDir;
