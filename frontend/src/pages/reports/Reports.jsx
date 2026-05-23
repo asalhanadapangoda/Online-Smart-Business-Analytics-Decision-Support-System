@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 
 export default function Reports() {
   const qc = useQueryClient();
-  const [form, setForm] = useState({ reportType: 'SALES', format: 'PDF', startDate: '', endDate: '' });
+  const [form, setForm] = useState({ reportType: 'SALES', format: 'PDF', startDate: '', endDate: '', emailRecipients: '' });
   const [showForm, setShowForm] = useState(false);
 
   const { data, isLoading } = useQuery({
@@ -46,6 +46,7 @@ export default function Reports() {
             <div><label>Format</label><select className="input" value={form.format} onChange={e=>setForm({...form,format:e.target.value})}><option>PDF</option><option>EXCEL</option></select></div>
             <div><label>Start Date</label><input type="date" className="input" value={form.startDate} onChange={e=>setForm({...form,startDate:e.target.value})} /></div>
             <div><label>End Date</label><input type="date" className="input" value={form.endDate} onChange={e=>setForm({...form,endDate:e.target.value})} /></div>
+            <div><label>Email Recipients (Optional)</label><input className="input" placeholder="e.g. boss@corp.com" value={form.emailRecipients} onChange={e=>setForm({...form,emailRecipients:e.target.value})} /></div>
           </div>
           <button className="btn btn-primary" onClick={() => generateMutation.mutate(form)} disabled={generateMutation.isPending}>{generateMutation.isPending ? 'Generating...' : 'Generate'}</button>
         </div>

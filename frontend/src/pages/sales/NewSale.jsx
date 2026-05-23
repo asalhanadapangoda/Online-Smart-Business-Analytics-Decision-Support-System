@@ -208,7 +208,7 @@ export default function NewSale() {
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       <button 
-                        className="btn btn-primary" 
+                        className="btn btn-success" 
                         style={{ padding: '0.4rem 0.6rem' }} 
                         onClick={() => addToCart(product)}
                       >
@@ -344,7 +344,7 @@ export default function NewSale() {
               </div>
             ) : (
               <button 
-                className="btn btn-primary" 
+                className="btn btn-success" 
                 style={{ width: '100%', padding: '0.75rem', fontSize: '1rem' }}
                 disabled={cart.length === 0 || createMutation.isPending}
                 onClick={handleSubmit}

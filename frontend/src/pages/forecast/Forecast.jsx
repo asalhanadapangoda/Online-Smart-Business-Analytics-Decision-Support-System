@@ -119,7 +119,7 @@ export default function Forecast() {
         </div>
         
         <div style={{ display: 'flex', gap: '1rem' }}>
-          <button className="btn btn-primary" onClick={() => forecastMutation.mutate(form)} disabled={!form.branchId || forecastMutation.isPending}>
+          <button className="btn btn-accent" onClick={() => forecastMutation.mutate(form)} disabled={!form.branchId || forecastMutation.isPending}>
             <TrendingUp size={16} /> {forecastMutation.isPending ? 'Generating Forecast...' : 'Generate Forecast'}
           </button>
           {form.branchId && (

@@ -83,7 +83,7 @@ export default function Login() {
             </button>
             <button
               type="button"
-              className="btn"
+              className="btn btn-secondary"
               style={{ justifyContent: 'center', padding: '0.65rem' }}
               onClick={resetSession}
             >
