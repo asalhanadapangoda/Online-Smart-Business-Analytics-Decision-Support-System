@@ -10,6 +10,9 @@ import com.sbadss.repository.BranchRepository;
 import com.sbadss.repository.CategoryRepository;
 import com.sbadss.repository.ProductRepository;
 import com.sbadss.service.ProductService;
+import com.sbadss.util.CommonMessages;
+import com.sbadss.exception.BusinessException;
+import com.sbadss.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,9 +51,9 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse createProduct(ProductRequest dto) {
         log.info("Creating product: {}", dto.getName());
         Category category = categoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> new com.sbadss.exception.ResourceNotFoundException("Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(CommonMessages.CATEGORY_NOT_FOUND));
         Branch branch = branchRepository.findById(dto.getBranchId())
-                .orElseThrow(() -> new com.sbadss.exception.ResourceNotFoundException("Branch not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(CommonMessages.BRANCH_NOT_FOUND));
         
         Product product = productMapper.toEntity(dto, category, branch);
         
@@ -68,7 +71,7 @@ public class ProductServiceImpl implements ProductService {
     public void updateStock(Long productId, Integer quantity) {
         log.info("Updating stock for product {}: {}", productId, quantity);
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new com.sbadss.exception.ResourceNotFoundException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(CommonMessages.PRODUCT_NOT_FOUND));
         product.setStockQuantity(product.getStockQuantity() + quantity);
         productRepository.save(product);
     }
@@ -78,7 +81,7 @@ public class ProductServiceImpl implements ProductService {
     public void importProducts(org.springframework.web.multipart.MultipartFile file, Long branchId) {
         log.info("Importing products from CSV for branch: {}", branchId);
         Branch branch = branchRepository.findById(branchId)
-                .orElseThrow(() -> new com.sbadss.exception.ResourceNotFoundException("Branch not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(CommonMessages.BRANCH_NOT_FOUND));
 
         try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(file.getInputStream()))) {
             String line;
@@ -107,7 +110,7 @@ public class ProductServiceImpl implements ProductService {
             }
         } catch (Exception e) {
             log.error("Failed to import products", e);
-            throw new RuntimeException("CSV Import failed: " + e.getMessage());
+            throw new BusinessException(CommonMessages.CSV_IMPORT_FAILED + e.getMessage());
         }
     }
 }

@@ -60,7 +60,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
             document.close();
         } catch (Exception e) {
-            throw new RuntimeException("Error generating PDF", e);
+            throw new RuntimeException(com.sbadss.util.CommonMessages.PDF_GENERATION_ERROR, e);
         }
 
         return new ByteArrayInputStream(out.toByteArray());

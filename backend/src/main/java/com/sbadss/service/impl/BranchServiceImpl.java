@@ -47,7 +47,7 @@ public class BranchServiceImpl implements BranchService {
     public BranchResponse createBranch(BranchRequest request) {
         log.info("Creating new branch: {}", request.getName());
         if (branchRepository.existsByName(request.getName())) {
-            throw new BusinessException("Branch with name '" + request.getName() + "' already exists");
+            throw new BusinessException(CommonMessages.BRANCH_ALREADY_EXISTS);
         }
         Branch branch = branchMapper.toEntity(request);
         

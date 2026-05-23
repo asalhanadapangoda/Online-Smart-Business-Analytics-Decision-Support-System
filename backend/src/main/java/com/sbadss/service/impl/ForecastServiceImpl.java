@@ -10,6 +10,7 @@ import com.sbadss.repository.BranchRepository;
 import com.sbadss.repository.PredictionRecordRepository;
 import com.sbadss.repository.SaleRepository;
 import com.sbadss.service.ForecastService;
+import com.sbadss.util.CommonMessages;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,7 +44,7 @@ public class ForecastServiceImpl implements ForecastService {
                 request.getBranchId(), request.getHorizonDays());
 
         Branch branch = branchRepository.findById(request.getBranchId())
-                .orElseThrow(() -> new ResourceNotFoundException("Branch not found: " + request.getBranchId()));
+                .orElseThrow(() -> new ResourceNotFoundException(CommonMessages.BRANCH_NOT_FOUND_ID + request.getBranchId()));
 
         // Fetch last 12 months of data for the model
         LocalDateTime endDate = LocalDateTime.now();
@@ -73,7 +74,7 @@ public class ForecastServiceImpl implements ForecastService {
         log.info("Calling AI forecast service at: {}", endpoint);
         Map<String, Object> aiResponse = (Map<String, Object>) restTemplate.postForObject(endpoint, payload, Map.class);
 
-        if (aiResponse == null) throw new RuntimeException("Null response from AI service");
+        if (aiResponse == null) throw new com.sbadss.exception.BusinessException(CommonMessages.NULL_AI_RESPONSE);
 
         List<DataPointResponse> predictions = ((List<Map<String, Object>>) aiResponse.get("predictions"))
                 .stream()

@@ -13,6 +13,7 @@ import com.sbadss.repository.ReportRepository;
 import com.sbadss.repository.SaleRepository;
 import com.sbadss.repository.UserRepository;
 import com.sbadss.service.ReportService;
+import com.sbadss.util.CommonMessages;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -60,7 +61,7 @@ public class ReportServiceImpl implements ReportService {
         log.info("Generating {} report in {} format for user: {}", request.getReportType(), request.getFormat(), userId);
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException(CommonMessages.USER_NOT_FOUND_ID + userId));
 
         Branch branch = request.getBranchId() != null ?
                 branchRepository.findById(request.getBranchId()).orElse(null) : null;
@@ -100,7 +101,7 @@ public class ReportServiceImpl implements ReportService {
             report.setStatus(Report.ReportStatus.FAILED);
             report.setErrorMessage(e.getMessage());
             reportRepository.save(report);
-            throw new BusinessException("Report generation failed: " + e.getMessage());
+            throw new BusinessException(CommonMessages.REPORT_GENERATION_FAILED + e.getMessage());
         }
     }
 
@@ -108,15 +109,15 @@ public class ReportServiceImpl implements ReportService {
     public Resource downloadReport(Long reportId) {
         log.info("Downloading report: {}", reportId);
         Report report = reportRepository.findById(reportId)
-                .orElseThrow(() -> new ResourceNotFoundException("Report not found: " + reportId));
+                .orElseThrow(() -> new ResourceNotFoundException(CommonMessages.REPORT_NOT_FOUND + reportId));
 
         if (report.getStatus() != Report.ReportStatus.COMPLETED) {
-            throw new BusinessException("Report is not yet available for download");
+            throw new BusinessException(CommonMessages.REPORT_NOT_AVAILABLE);
         }
 
         FileSystemResource resource = new FileSystemResource(report.getFilePath());
         if (!resource.exists()) {
-            throw new ResourceNotFoundException("Report file not found on server");
+            throw new ResourceNotFoundException(CommonMessages.REPORT_FILE_NOT_FOUND);
         }
         return resource;
     }
