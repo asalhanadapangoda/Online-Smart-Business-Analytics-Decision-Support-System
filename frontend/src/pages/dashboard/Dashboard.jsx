@@ -106,7 +106,7 @@ export default function Dashboard() {
       </div>
 
       {/* Recommendations & Charts */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+      <div className="grid-dashboard" style={{ marginBottom: '1.5rem' }}>
         {/* Sales Trend */}
         <div className="card">
           <h3 style={{ fontWeight: 700, marginBottom: '1rem', fontSize: '0.95rem' }}>📈 Sales Trend (This Month)</h3>

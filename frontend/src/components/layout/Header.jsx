@@ -135,7 +135,7 @@ export const Header = ({ onMenuClick }) => {
           <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <User size={18} color="white" />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }} className="desktop-only">
             <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{user?.fullName}</span>
             <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>{user?.role}</span>
           </div>

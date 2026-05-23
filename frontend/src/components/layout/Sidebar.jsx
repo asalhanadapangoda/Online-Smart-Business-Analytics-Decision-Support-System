@@ -4,7 +4,7 @@ import { useAuthStore } from '@/store/authStore';
 import {
   LayoutDashboard, ShoppingCart, DollarSign, Package,
   Users, FileText, Settings, LogOut, ChevronLeft,
-  ChevronRight, Bot, TrendingUp, Building2, UserCog
+  ChevronRight, Bot, TrendingUp, Building2, UserCog, X
 } from 'lucide-react';
 
 const navItems = [
@@ -50,7 +50,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
           {!collapsed && <span style={{ fontWeight: 700, fontSize: '0.9rem', whiteSpace: 'nowrap' }}>SBADSS</span>}
         </div>
         <button className="mobile-toggle" onClick={onClose} style={{ background: 'transparent', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer' }}>
-          <LogOut size={20} style={{ transform: 'rotate(180deg)' }} />
+          <X size={20} />
         </button>
       </div>
 
