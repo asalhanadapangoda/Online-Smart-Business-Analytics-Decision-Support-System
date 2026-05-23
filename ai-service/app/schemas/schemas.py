@@ -41,6 +41,7 @@ class ChatResponse(BaseModel):
     intent: str
     confidence: float
     message: str
+    data: Optional[dict] = None
     suggested_prompts: List[str] = []
 
 

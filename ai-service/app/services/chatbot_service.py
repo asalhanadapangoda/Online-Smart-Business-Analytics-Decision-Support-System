@@ -1,9 +1,13 @@
+import os
 import re
 import uuid
-from typing import List, Optional
 import logging
+import requests
+from typing import List, Optional
 
 logger = logging.getLogger(__name__)
+
+BACKEND_URL = os.getenv("SPRING_BOOT_API_URL", "http://localhost:8080")
 
 # ─── NLP Intent Patterns ─────────────────────────────────────────────────────
 INTENT_PATTERNS = {
@@ -39,13 +43,19 @@ SUGGESTED_PROMPTS = [
 ]
 
 
-def process_message(message: str, session_id: Optional[str] = None) -> dict:
+def process_message(
+    message: str,
+    session_id: Optional[str] = None,
+    branch_id: Optional[int] = None,
+    auth_token: Optional[str] = None
+) -> dict:
     """
     NLP pipeline:
     1. Tokenize and normalize input
     2. Detect intent via regex pattern matching
     3. Calculate confidence
-    4. Return structured response
+    4. Call Spring Boot backend for dynamic analytics
+    5. Return structured response
     """
     if not session_id:
         session_id = str(uuid.uuid4())
@@ -58,6 +68,70 @@ def process_message(message: str, session_id: Optional[str] = None) -> dict:
     logger.info(f"Intent: {detected_intent}, Confidence: {confidence:.2f}")
 
     response_message = RESPONSES.get(detected_intent, RESPONSES["UNKNOWN"])
+    data = None
+    
+    headers = {}
+    if auth_token:
+        headers["Authorization"] = auth_token
+
+    try:
+        if detected_intent in ["REVENUE_QUERY", "EXPENSE_QUERY", "TOP_PRODUCTS", "GROWTH_QUERY", "RECOMMENDATION"]:
+            url = f"{BACKEND_URL}/api/analytics/dashboard"
+            params = {"branchId": branch_id} if branch_id else {}
+            res = requests.get(url, headers=headers, params=params, timeout=5)
+            if res.status_code == 200:
+                data = res.json()
+                if detected_intent == "REVENUE_QUERY":
+                    rev = data.get('totalRevenue', 0)
+                    response_message = f"Your total revenue is ${rev:,.2f}."
+                elif detected_intent == "EXPENSE_QUERY":
+                    exp = data.get('totalExpenses', 0)
+                    response_message = f"Your total expenses are ${exp:,.2f}."
+                elif detected_intent == "TOP_PRODUCTS":
+                    products = data.get('topSellingProducts', [])
+                    if products:
+                        top = ", ".join([f"{p.get('productName', 'Unknown')} ({p.get('quantitySold', 0)} sold)" for p in products[:3]])
+                        response_message = f"Your top selling products are: {top}."
+                elif detected_intent == "GROWTH_QUERY":
+                    rev_grow = data.get('revenueGrowth', 0)
+                    response_message = f"Your revenue growth is {rev_grow}% compared to the previous period."
+                elif detected_intent == "RECOMMENDATION":
+                    rev_grow = data.get('revenueGrowth', 0)
+                    if rev_grow < 0:
+                        response_message = "Your revenue is declining. Consider running a marketing campaign on top products."
+                    else:
+                        response_message = "Your revenue is growing! Keep focusing on your high-performing items."
+                        
+        elif detected_intent == "PROFIT_QUERY":
+            url = f"{BACKEND_URL}/api/analytics/profit-loss"
+            params = {"branchId": branch_id} if branch_id else {}
+            res = requests.get(url, headers=headers, params=params, timeout=5)
+            if res.status_code == 200:
+                data = res.json()
+                net = data.get('netProfit', 0)
+                gross = data.get('grossRevenue', 0)
+                margin = (net / gross * 100) if gross > 0 else 0
+                response_message = f"Your net profit is ${net:,.2f} with a profit margin of {margin:.1f}%."
+
+        elif detected_intent == "CUSTOMER_QUERY":
+            url = f"{BACKEND_URL}/api/customers"
+            res = requests.get(url, headers=headers, timeout=5)
+            if res.status_code == 200:
+                customers = res.json()
+                # handle both pageable and list response
+                if isinstance(customers, dict) and 'content' in customers:
+                    customers_list = customers['content']
+                elif isinstance(customers, list):
+                    customers_list = customers
+                else:
+                    customers_list = []
+                data = {"totalCustomers": len(customers_list)}
+                response_message = f"You have {len(customers_list)} active customers."
+
+    except Exception as e:
+        logger.error(f"Error calling backend: {e}")
+        response_message += "\n(Note: Live data is currently unavailable.)"
+
     suggestions = [p for p in SUGGESTED_PROMPTS if p.lower() not in normalized][:3]
 
     return {
@@ -65,6 +139,7 @@ def process_message(message: str, session_id: Optional[str] = None) -> dict:
         "intent": detected_intent,
         "confidence": confidence,
         "message": response_message,
+        "data": data,
         "suggested_prompts": suggestions
     }
 
