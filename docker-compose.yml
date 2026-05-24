@@ -1,0 +1,76 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: sbadss-db
+    restart: always
+    environment:
+      POSTGRES_DB: sbadss
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: asal2003
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d sbadss"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: sbadss-redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sbadss-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=sbadss
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=asal2003
+      - SPRING_DATA_REDIS_HOST=redis
+      - AI_SERVICE_URL=http://ai-service:8000
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    container_name: sbadss-ai-service
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sbadss-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - ai-service
+
+volumes:
+  postgres_data:

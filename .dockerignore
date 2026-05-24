@@ -1,0 +1,13 @@
+.git
+.idea
+*.iml
+**/node_modules/
+**/venv/
+**/.venv/
+**/__pycache__/
+*.log
+docker-compose.yml
+.dockerignore
+Dockerfile
+frontend/Dockerfile
+ai-service/Dockerfile
