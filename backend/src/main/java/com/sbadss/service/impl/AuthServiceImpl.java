@@ -63,6 +63,8 @@ public class AuthServiceImpl implements AuthService {
                 .token(jwtToken)
                 .username(user.getUsername())
                 .role(role.getName())
+                .branchId(branch != null ? branch.getId() : null)
+                .branchName(branch != null ? branch.getName() : null)
                 .build();
     }
 
@@ -83,6 +85,8 @@ public class AuthServiceImpl implements AuthService {
                 .token(jwtToken)
                 .username(user.getUsername())
                 .role(user.getRole().getName())
+                .branchId(user.getBranch() != null ? user.getBranch().getId() : null)
+                .branchName(user.getBranch() != null ? user.getBranch().getName() : null)
                 .build();
     }
 }

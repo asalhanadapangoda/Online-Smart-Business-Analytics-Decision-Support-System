@@ -7,6 +7,7 @@ import com.sbadss.repository.*;
 import com.sbadss.service.SaleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -202,13 +203,37 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<SaleResponse> getAllSales(Long branchId) {
-        log.info("Fetching all sales for branch: {}", branchId);
+        // Get authenticated username from security context
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        // Use scalar queries — returns raw String/Long from DB, zero JPA proxy/lazy-load issues
+        String roleName = userRepository.findRoleNameByUsername(username).orElse("");
+        Long userBranchId = userRepository.findBranchIdByUsername(username).orElse(null);
+
+        log.info("getAllSales: user={}, role={}, userBranchId={}, requestedBranchId={}",
+                username, roleName, userBranchId, branchId);
+
         List<Sale> sales;
-        if (branchId != null) {
-            sales = saleRepository.findByBranchId(branchId);
+
+        if ("ADMIN".equals(roleName)) {
+            // Admin sees all branches, or can filter to one specific branch
+            if (branchId != null) {
+                sales = saleRepository.findByBranchId(branchId);
+            } else {
+                sales = saleRepository.findAll();
+            }
         } else {
-            sales = saleRepository.findAll();
+            // CASHIER and MANAGER: always locked to their own branch — ignore any client-sent branchId
+            if (userBranchId != null) {
+                log.info("Restricting to branch {} for {} ({})", userBranchId, username, roleName);
+                sales = saleRepository.findByBranchId(userBranchId);
+            } else {
+                log.warn("User {} ({}) has no branch assigned — returning empty list", username, roleName);
+                sales = java.util.Collections.emptyList();
+            }
         }
 
         return sales.stream().map(this::mapToResponse).collect(Collectors.toList());

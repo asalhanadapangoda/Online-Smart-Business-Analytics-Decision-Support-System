@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { salesApi } from '@/services/api';
-import { Plus, CheckCircle, Trash2, ShoppingCart, Download } from 'lucide-react';
+import { Plus, CheckCircle, Trash2, ShoppingCart, Download, Building2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '@/store/authStore';
 import { format } from 'date-fns';
@@ -11,11 +11,15 @@ const fmt = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency:
 export default function SalesList() {
   const { user } = useAuthStore();
   const qc = useQueryClient();
+  const isAdmin = user?.role === 'ADMIN';
   const isManager = ['ADMIN', 'MANAGER'].includes(user?.role);
 
+  // Non-admin users are scoped to their own branch automatically
+  const queryBranchId = isAdmin ? undefined : user?.branchId;
+
   const { data, isLoading } = useQuery({
-    queryKey: ['sales'],
-    queryFn: () => salesApi.getAll().then(r => r.data.data),
+    queryKey: ['sales', queryBranchId],
+    queryFn: () => salesApi.getAll(queryBranchId).then(r => r.data.data),
   });
 
   const completeMutation = useMutation({
@@ -50,7 +54,26 @@ export default function SalesList() {
       <div className="page-header">
         <div>
           <h1 className="page-title">Sales</h1>
-          <p className="page-subtitle">{sales.length} transaction{sales.length !== 1 ? 's' : ''} found</p>
+          <p className="page-subtitle">
+            {sales.length} transaction{sales.length !== 1 ? 's' : ''} found
+            {!isAdmin && user?.branchName && (
+              <span style={{
+                marginLeft: '0.75rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.3rem',
+                background: 'rgba(99,102,241,0.12)',
+                color: 'var(--color-primary)',
+                borderRadius: '999px',
+                padding: '0.2rem 0.7rem',
+                fontSize: '0.78rem',
+                fontWeight: 600,
+              }}>
+                <Building2 size={12} />
+                {user.branchName}
+              </span>
+            )}
+          </p>
         </div>
         <a href="/sales/new" className="btn btn-primary"><Plus size={16} /> New Sale</a>
       </div>
@@ -124,3 +147,4 @@ export default function SalesList() {
     </div>
   );
 }
+

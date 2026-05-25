@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
@@ -24,6 +24,10 @@ const ProfitLoss = lazy(() => import('./pages/analytics/ProfitLoss'));
 
 const qc = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 30000 } } });
 
+// Bump this version whenever the user session shape changes (e.g. new fields added).
+// Users with older cached sessions will be automatically logged out.
+const SESSION_VERSION = 2;
+
 const PageLoader = () => (
   <div style={{ display:'flex',alignItems:'center',justifyContent:'center',height:'60vh' }}>
     <div style={{ textAlign:'center' }}>
@@ -39,7 +43,26 @@ const RoleBasedRedirect = () => {
 };
 
 export default function App() {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user, logout } = useAuthStore();
+
+  // Force re-login if session is stale (missing branchId for non-admin users)
+  useEffect(() => {
+    if (!isAuthenticated || !user) return;
+
+    const storedVersion = Number(localStorage.getItem('sbadss-session-version') || '1');
+    const isNonAdmin = user.role !== 'ADMIN';
+    const missingBranchId = isNonAdmin && user.branchId == null;
+
+    if (storedVersion < SESSION_VERSION || missingBranchId) {
+      // Session is outdated — wipe it and send to login
+      logout();
+      localStorage.removeItem('sbadss-auth');
+      localStorage.setItem('sbadss-session-version', String(SESSION_VERSION));
+      window.location.href = '/login';
+    } else {
+      localStorage.setItem('sbadss-session-version', String(SESSION_VERSION));
+    }
+  }, [isAuthenticated, user, logout]);
 
   return (
     <QueryClientProvider client={qc}>
@@ -68,3 +91,4 @@ export default function App() {
     </QueryClientProvider>
   );
 }
+

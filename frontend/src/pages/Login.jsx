@@ -33,8 +33,8 @@ export default function Login() {
     setLoading(true);
     try {
       const res = await authApi.login(form);
-      const { token, role, username, fullName, id } = res.data.data;
-      login({ username, fullName, role, id }, token);
+      const { token, role, username, fullName, id, branchId, branchName } = res.data.data;
+      login({ username, fullName, role, id, branchId, branchName }, token);
       toast.success(`Welcome back, ${fullName || username}!`);
       if (role === 'CASHIER') {
         navigate('/sales');
